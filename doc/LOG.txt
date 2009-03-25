@@ -1,0 +1,35 @@
+# ex: ts=4
+
+2004-08-24
+
+added 3 verbosity levels, toggleable with -v, -vv and -vvv
+each shows a different level of info
+
+trying to clean out all the leaks... had a bunch of trouble
+but i think i tracked most of it down. just noticed that
+./shac -pd / thinks that "/" is mounted read-only, i'll have
+to take a look at that
+
+2004-08-23
+
+worked on getting recursive delete checking done, but it's not quite
+there yet, code is sitting on my home box. ruben in #php, a big OpenBSD
+fan, says that shac compiles and executes without a glitch
+on OpenBSD 3.5-current. yay!
+
+i've got the basics of recursive delete checking done, seems to work ok
+because of the way things are structured we only check files in a
+	breadth-first check, then if they check out, then we check all dirs
+	underneath...
+adding some things to the TODO...
+
+2004-08-21
+
+* trying to get shac to compile on freebsd, changes:
+	* mntent.h doesn't exist on freebsd
+	* user_from_uid is defined in stdlib.h on freebsd
+	* mntpt access is totally different on FreeBSD than with glibc
+
+shac now works FreeBSD, should be r17. have to test on Linux
+
+

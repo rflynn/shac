@@ -1,0 +1,42 @@
+
+TODO LIST
+
+------------------------------------------------------------------------------
+
+* more static buffers, fewer mallocs
+
+* directory deletion perms (BASICALLY DONE)
+	currently does *not* work
+	need to recurse through every file and subdir
+
+* mounting noexec
+	i'm pretty sure mountpoints can be specified noexec, yet i see no
+	documentation of that in glibc. should be simple to actually
+	implement, i just want to do it right
+
+* create
+	currently works in simple situations
+	have to pay attention to sticky bit, should be ok
+	what to do about create and an existing file? dir should be "can i
+	create a file in this dir"... i think create and a file should be
+	the same as delete...
+
+* flock
+	check if file is locked by an active process, this was recommended
+	by jason at work, and is a good idea
+
+* networked filesystems
+	i don't know anything about how permissions work here, this'll be
+	something i'll have to research
+
+* explore permissions
+	there are so many weird circumstances in the world of UNIX perms...
+	i'm sure the code is probably about 50% right, maybe not even
+	investigate situations on an ongoing basis
+
+* add all kinds of cool things to the svn repository, like hooks for
+	creating web-available tar.gz archives per every commit. testing
+	hooks now with this change. more. testing hook. more tests. and more.
+
+
+# ex: set ts=8 tw=78:
