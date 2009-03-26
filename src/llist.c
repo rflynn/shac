@@ -299,9 +299,9 @@ int list_nodes_free(list_head *head, void (*free_data)(void *))
 		tmp = list_node_next(curr);
 		if (0 == list_node_free(curr, free_data)) {
 #ifdef DEBUG_LIST
-			fprintf(stderr, "%s:%d:list_nodes_free() error freeing curr(%p) with free_data(%p)!\n",
-				__FILE__, __LINE__, (void *)curr, (void *)free_data);
-				exit(1);
+			fprintf(stderr, "%s:%d:list_nodes_free() error freeing curr(%p) with free_data()!\n",
+				__FILE__, __LINE__, (void *)curr);
+			exit(1);
 #endif
 			return 0;
 		}

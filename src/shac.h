@@ -7,7 +7,18 @@
 #ifndef SHAC_H
 #define SHAC_H
 
+#include <unistd.h>
 #include "llist.h"
+#ifdef LINUX
+	#include <mntent.h> /* glibc-ish: setgrent(), getgrent() endgrent(), etc. */
+#else
+	#include <fstab.h> /* freebsd-ish:  */
+#endif
+#include <unistd.h> /* getcwd(), getopt() */
+#include <pwd.h> /* struct passwd, getpwnam */
+#include <grp.h> /* struct group, setgrent, getgrent, endgrent */
+#include <sys/stat.h> /* struct stat, stat */
+
 
 #if 0
 #define DEBUG
@@ -47,12 +58,6 @@ i should probably try to combine these, but it needs to be thought out more */
 #define STATUS_UNKNOWN (1) 
 #define STATUS_SYMLINKS_TOO_DEEP (2)
 
-const char *RPT_STATUS[] = {
-	/* do not include an OK msg, we calculate which message to print by (STATUS_* / log(2)) */
-	"unknown ???",
-	"symlink loop, gave up after MAXSYMLINKS levels"
-};
-
 /* reasons why we might not have access to a file */
 #define REAS_NONE			PERM_NONE
 #define REAS_NO_READ		PERM_READ
@@ -65,21 +70,6 @@ const char *RPT_STATUS[] = {
 #define REAS_NO_STICKY		128
 #define REAS_NO_DEPENDANCY	256		/* files under a directory cannot be deleted */
 #define REAS_NO_CERTAIN		512		/* we were unable to read all the files, so we don't know */
-
-/* these entries are tied to REAS_NO_* values */
-const char *RPT_REASONS[] = {
-	"??no reason??", /* REAS_NONE */
-	"can't read", /* REAS_NO_READ */
-	"can't write", /* REAS_NO_WRIT */
-	"can't exec", /* REAS_NO_EXEC */
-	"can't create", /* REAS_NO_CREA */
-	"can't delete", /* REAS_NO_DELE */
-	"mounted readonly", /* REAS_MNTPT_RO */
-	"mounted noexec", /* REAS_MNTPT_NX */
-	"ownership required", /* REAS_NO_STICKY */
-	"contains undeletable files", /* REAS_NO_DEPENDANCY */
-	"inaccessible" /* REAS_NO_CERTAIN */
-};
 
 /* specific reasons why we can have access to a file */
 #define REAS_YES_UR	1
@@ -114,17 +104,6 @@ enum rpt {
 	RPT_SYMLNK	= 3
 };
 
-/**
- * 
- * @note must be synced with "enum rpt" above
- */
-const char *RPT_LABELS[] = {
-	"??",
-	"OK",
-	"!!",
-	"LN"
-};
-
 #define OUTPUT_NONE	0
 #define OUTPUT_ALL	1
 #define OUTPUT_ERR	2
@@ -149,7 +128,7 @@ enum {
 
 /* our data structures */
 
-typedef int unsigned perm_t;
+typedef unsigned perm_t;
 
 typedef struct {
 	char *mntdir;
@@ -207,5 +186,6 @@ typedef struct {
 	char *dsc;
 	perm_t mask;
 } permdsc_t;
+
 
 #endif
