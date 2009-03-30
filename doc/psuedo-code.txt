@@ -1,0 +1,81 @@
+
+Explain shac program concepts and algorithms:
+
+Concepts
+-----------------------------------------------------------------------------
+
+  file
+
+    user (owner)
+    group
+    other
+    
+  path
+
+    a path is a series of zero or more dir-or-symlink followed by an optional non-directory-file
+
+    when serialized the path tokens are joined with a separator char '/'
+
+  directory
+    a file that only holds other files
+
+  user
+  
+    root user
+
+  group
+  
+  mount point
+
+    
+
+  permission
+
+    sticky
+      The sticky permission. The typical behaviour of the sticky bit on executable files encourages the kernel to retain the resulting process image beyond termination. On a directory, the sticky permission prevents users from renaming, moving or deleting contained files owned by users other than themselves, even if they have write permission to the directory. Only the directory owner and superuser are exempt from this. <URL: http://en.wikipedia.org/wiki/File_system_permissions#Traditional_Unix_permissions>
+
+    None   = 0x0
+    Read   = 0x1
+    Write  = 0x2
+    Exec   = 0x4
+    Create = 0x8
+    Delete = 0x10
+
+
+Combinations
+-----------------------------------------------------------------------------
+
+  File Status
+    when we attempt to read a file path, what can happen?
+      OK: 
+      UnknownError: 
+      SymlinksTooDeep: 
+
+  File Permission Reason
+    why a file / permission was false
+
+    NoRead: Read permission required but not available.
+    NoWrite: Write permission required but not available.
+    NoExec: Exec permission required but not available.
+    NoCreate: Create permission required but not available.
+    NoDelete: Delete permission required but not available.
+    MntPtReadOnly: Write permission required but directory's mountpoint is read-only.
+    MntPtNoExec: Write permission required but directory's mountpoint is no-exec (nx).
+    Sticky: 
+    Dependency:
+      deleting a directory requires that all child files and folders must be recursively deletable.
+      this reason indicates that a directory is directly deletable but contain one or more files or directories
+      that cannot be.
+    Uncertain:
+      the user under which the program is executing does not have read permission on one or more files/directories;
+      meaning we cannot know the correct answer.
+      
+
+  
+Algorithms
+-----------------------------------------------------------------------------
+
+
+
+
+
