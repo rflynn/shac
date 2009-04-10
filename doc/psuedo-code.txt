@@ -4,35 +4,8 @@ Explain shac program concepts and algorithms:
 Concepts
 -----------------------------------------------------------------------------
 
-  file
-
-    user (owner)
-    group
-    other
-    
-  path
-
-    a path is a series of zero or more dir-or-symlink followed by an optional non-directory-file
-
-    when serialized the path tokens are joined with a separator char '/'
-
-  directory
-    a file that only holds other files
-
-  user
-  
-    root user
-
-  group
-  
-  mount point
-
-    
-
-  permission
-
-    sticky
-      The sticky permission. The typical behaviour of the sticky bit on executable files encourages the kernel to retain the resulting process image beyond termination. On a directory, the sticky permission prevents users from renaming, moving or deleting contained files owned by users other than themselves, even if they have write permission to the directory. Only the directory owner and superuser are exempt from this. <URL: http://en.wikipedia.org/wiki/File_system_permissions#Traditional_Unix_permissions>
+  Permission
+  ----------
 
     None   = 0x0
     Read   = 0x1
@@ -40,6 +13,113 @@ Concepts
     Exec   = 0x4
     Create = 0x8
     Delete = 0x10
+
+    Sticky
+      The sticky permission. The typical behaviour of the sticky bit on executable files encourages the kernel to retain the resulting process image beyond termination. On a directory, the sticky permission prevents users from renaming, moving or deleting contained files owned by users other than themselves, even if they have write permission to the directory. Only the directory owner and superuser are exempt from this. <URL: http://en.wikipedia.org/wiki/File_system_permissions#Traditional_Unix_permissions>
+
+      Sticky comes into play in relation to the 'Delete' permission. If a file's directory is sticky, then the user must own the file in order to have delete permissions on it,
+      even if they have normal write permissions.
+
+  File
+  ----
+
+    User (owner)
+      the owner of the file; if a user matches this then these permissions apply.
+    Group
+      the group owner of the file; if a user belongs to this group, these permissions apply.
+    Other
+      if a user is not the owner and does not belong to the group, these permissions apply.
+    
+    Path
+    ----
+
+      a path is a series of zero or more dir-or-symlink followed by an optional non-directory-file
+
+      a path provided to the program may be absolute, that is, starting with "/", or it may be relative to the current path (if it starts with any other character)
+
+      a path may contain the special "." or ".." components.
+
+      the process of transforming a relative path into an absolute path and/or translating "." and ".." into an absolute path is called canonicalization, and is not
+      as simple as it may appear.
+
+      each component of a path may be a "normal" file or directory or a symlink.
+      if the component is a symlink it may point to a completely different path, which may be located under a different mountpoint.
+      thus traversing a path is not so simple.
+      furthermore, a path then has its "original" name, as given to the program; and the "real" path, that is, 
+
+      when serialized the path tokens are joined with a separator char '/'
+
+      a user's permissions on a file may rely not only on the permissions of that one file, but on the permissions of all path components.
+
+      Properties
+        
+        string abspath
+          
+
+        !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        
+
+    Directory
+    ---------
+      a file that only holds other files
+
+  Group
+  -----
+
+    a named entity which can contain zero or more users.
+
+    every file has an owner group and permissions relating to that group.
+
+    if a user is not the owner of a file, but belongs to the group that owns it, then those permissions are what apply.
+    
+    Properties
+
+      string name
+        unique string description
+
+      integer gid
+        unique integer identifier
+
+  User
+  ----
+    
+    A user is a unique named role within a computer system.
+
+    If a user matches a file's "owner" then the owner permissions are what apply.
+  
+    root user
+
+    Properties
+
+      string name
+        user name
+
+      integer uid
+        unique user id
+
+      list(integer) gid
+        ids of all groups a user belongs to
+
+  MountPoint
+  ----------
+
+    a mount point is a mapping between a device, a filesystem location and a filesystem driver which allows access to a filesystem through a particular path.
+
+    mount points carry with them their own options, which apply globally to all files.
+
+    in POSIX all files ultimately belong to at least one mount point.
+
+    Properties:
+
+      string dev
+
+      string dir
+
+      bool isReadOnly()
+      
+      bool isNoExec()
+
+    
 
 
 Combinations
@@ -54,28 +134,80 @@ Combinations
   File Permission Reason
     why a file / permission was false
 
-    NoRead: Read permission required but not available.
-    NoWrite: Write permission required but not available.
-    NoExec: Exec permission required but not available.
-    NoCreate: Create permission required but not available.
-    NoDelete: Delete permission required but not available.
-    MntPtReadOnly: Write permission required but directory's mountpoint is read-only.
-    MntPtNoExec: Write permission required but directory's mountpoint is no-exec (nx).
-    Sticky: 
-    Dependency:
-      deleting a directory requires that all child files and folders must be recursively deletable.
-      this reason indicates that a directory is directly deletable but contain one or more files or directories
-      that cannot be.
-    Uncertain:
-      the user under which the program is executing does not have read permission on one or more files/directories;
-      meaning we cannot know the correct answer.
+    Why
+      NoRead: Read permission required but not available.
+      NoWrite: Write permission required but not available.
+      NoExec: Exec permission required but not available.
+      NoCreate: Create permission required but not available.
+      NoDelete: Delete permission required but not available.
+      MntPtReadOnly: Write permission required but directory's mountpoint is read-only.
+      MntPtNoExec: Write permission required but directory's mountpoint is no-exec (nx).
+      Sticky: 
+      Dependency:
+        deleting a directory requires that all child files and folders must be recursively deletable.
+        this reason indicates that a directory is directly deletable but contain one or more files or directories
+        that cannot be.
+      Uncertain:
+        the user under which the program is executing does not have read permission on one or more files/directories;
+        meaning we cannot know the correct answer.
       
 
+    Properties
+
+      Path path
+        the path that caused the error, if there was one.
+        if successful, will point at the whole path.
+      why_yes
+        if the 
+      why_not
   
+
 Algorithms
 -----------------------------------------------------------------------------
 
+The meat of shac is a set of two interdependently-recursive functions: report_gen() and report_calc()
 
+shac(parameters)
+
+  user = username_current()
+  perm = Perm.Read
+  path = "."
+
+  process options
+    -u user
+    -p perm
+    path
+
+  perm_calc(user, perm, path)
+  
+
+perm_calc(username, perm, path)
+
+  target = path_canonicalize(cwd, path)
+  ; path canonicalization may fail if the user running the program does not have
+  ; sufficient permissions to traverse the path
+
+  ; load user and user's groups
+  user = user_load(username)
+
+  ; load all system mountpoints
+  mntpts = mntpt_load_all()
+
+  ; split canonical path into its constituent parts
+  pathlist = path_split(target)
+
+  ; traverse pathlist, calculating required permissions along the way
+  able = report_gen(user, perms, pathlist)
+
+
+bool report_gen(user, perm, pathlist)
+
+  
+  
+
+reason report_calc(path, user, reasmask, permreq, permeff, islast)
+
+  
 
 
 
