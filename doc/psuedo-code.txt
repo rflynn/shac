@@ -140,17 +140,16 @@ Combinations
       NoExec: Exec permission required but not available.
       NoCreate: Create permission required but not available.
       NoDelete: Delete permission required but not available.
+      Uncertain:
+        the user under which the program is executing does not have read permission on one or more files/directories;
+        meaning we cannot know the correct answer.
       MntPtReadOnly: Write permission required but directory's mountpoint is read-only.
       MntPtNoExec: Write permission required but directory's mountpoint is no-exec (nx).
-      Sticky: 
+      Sticky: Write permission required for delete, but parent directory is sticky and user is not the owner of the file.
       Dependency:
         deleting a directory requires that all child files and folders must be recursively deletable.
         this reason indicates that a directory is directly deletable but contain one or more files or directories
         that cannot be.
-      Uncertain:
-        the user under which the program is executing does not have read permission on one or more files/directories;
-        meaning we cannot know the correct answer.
-      
 
     Properties
 
