@@ -26,7 +26,7 @@ void *xrealloc(void *, size_t); /* checks NULL, will realloc */
 void xfree(void *);
 char *readlink_malloc(const char *);
 char *strnchr(const char *, char);
-char *strndup(const char *, int);
+char *strndup(const char *, size_t);
 char *strapp(char *, const char *);
 char *strcapp(char *, const char);
 int strisnum(const char *);

@@ -4,7 +4,7 @@
 /* shac (SHow ACess) v0.01                                                  */
 /*                                                                          */
 /* Written by Ryan Flynn aka pizza                                          */
-/* Copyright 2004 by Ryan Flynn (pizza@parseerror.com)                      */
+/* Copyright 2004 by Ryan Flynn (parseerror@gmail.com)                      */
 /*                                                                          */
 /* Inspired by Michael Zalewski's "Fallen" Ideas #3                         */
 /*  (http://lcamtuf.coredump.cx/soft/STUPID_IDEAS.txt)                      */
@@ -74,7 +74,7 @@
 				"  checks if root can read and write the file /etc/hosts\n" \
 				"\n" \
 				"Info: http://parseerror.com/shac/\n" \
-				"Bugs: pizza@parseerror.com\n" \
+				"Bugs: parseerror@gmail.com\n" \
 				"\n" \
 				"Anonymous read-only access to the latest source is available\n" \
 				"via subversion with the following command:\n" \
@@ -904,7 +904,7 @@ static void verbose_flush(void)
 {
 	list_node *node;
 	for (node = list_first(VERBOSE_MSG); node != NULL; node = list_node_next(node))
-		fprintf(stdout, list_node_data(node));
+		fputs(list_node_data(node), stdout);
 	list_nodes_free(VERBOSE_MSG, NULL); /* clear entries */
 }
 

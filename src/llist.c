@@ -64,8 +64,8 @@ list_node *list_node_create_deep(const void *data, void *(*deepcopy)(const void 
 
 	if (NULL == (node = malloc(sizeof(list_node)))) {
 #ifdef DEBUG_LIST
-		fprintf(stderr, "%s:%d:list_node_create(): could not allocate %d bytes for node!\n",
-			__FILE__, __LINE__, sizeof(list_node));
+		fprintf(stderr, "%s:%d:list_node_create(): could not allocate %lu bytes for node!\n",
+			__FILE__, __LINE__, (unsigned long)sizeof(list_node));
 #endif
 		return NULL;
 	}

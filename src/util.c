@@ -26,8 +26,8 @@ void err_nomem(const char *file, int line, size_t bytes)
 	assert(NULL != file);
 #endif
 
-	fprintf(stderr, "%s:%d: could not allocate %d bytes!\n",
-		file, line, bytes);
+	fprintf(stderr, "%s:%d: could not allocate %lu bytes!\n",
+		file, line, (unsigned long)bytes);
 
 	exit(EXIT_FAILURE);
 }
@@ -184,19 +184,21 @@ char * strnchr(const char *s, char c)
 }
 
 /* duplicates s to a max of n bytes */
-char * strndup(const char *s, int n)
+#if !(_SVID_SOURCE || _BSD_SOURCE || _XOPEN_SOURCE >= 500)
+char * strndup(const char *s, size_t n)
 {
 	char *dupe = NULL;
 #ifdef DEBUG
 	assert(NULL != s);
 	assert(n >= 0);
-	printf("strndup(\"%s\", %d):%d\n", s, n, __LINE__);
+	printf("strndup(\"%s\", %u):%d\n", s, (unsigned)n, __LINE__);
 #endif
 	dupe = xmalloc(n + 1);
 	strncpy(dupe, s, n);
 	memset(dupe + n, '\0', 1); /* append \0 */
 	return dupe;
 }
+#endif
 
 /* make enough room in s for app */
 char * strapp(char *s, const char *app)
